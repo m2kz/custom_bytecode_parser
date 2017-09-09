@@ -12,7 +12,8 @@ class EvmHeader {
 
 public:
     EvmHeader();
-    int read_header(std::vector<char> buffer);
+
+    void read_header(std::vector<char> &buffer);
 
 private:
     char magic[8];
@@ -20,7 +21,9 @@ private:
     uint32_t data_size;
     uint32_t initial_data_size;
 
-    int verify();
+    void verify(std::vector<char> &buffer);
+
+    uint32_t extract_uint_32_value(std::vector<char> &buffer);
 };
 
 #endif //PROJECT_EVM_FILE_HEADER_H

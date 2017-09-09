@@ -7,7 +7,7 @@
 #include <vector>
 #include <iostream>
 
-int is_file(std::string& file_path) {
+int is_file(std::string &file_path) {
     struct stat sb;
 
     if (stat(file_path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode)) {
@@ -17,7 +17,7 @@ int is_file(std::string& file_path) {
     }
 }
 
-int read_file_to_buffer(std::string& file_path, std::vector<char>& buffer) {
+int read_file_to_buffer(std::string &file_path, std::vector<char> &buffer) {
 
     std::ifstream file(file_path, std::ios::binary);
     file.seekg(0, std::ios::end);
