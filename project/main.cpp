@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <sys/stat.h>
 #include <string>
 #include <vector>
@@ -24,6 +25,15 @@ int main(int argc, char *argv[]) {
     {
         printf("It's a file");
     }
+
+    std::vector<char> buffer;
+    std::ifstream file(emv_file_path, std::ios::binary);
+    file.seekg(0, std::ios::end);
+    int fileSize = file.tellg();
+    file.seekg(0, std::ios::beg);
+    buffer.resize(fileSize);
+    file.read((char *)&(buffer[0]), fileSize);
+    file.close();
 
     return 0;
 }
