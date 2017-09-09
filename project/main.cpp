@@ -1,5 +1,8 @@
 #include <iostream>
 #include <sys/stat.h>
+#include <string>
+#include <vector>
+#include <errno.h>
 
 struct Header {
 
@@ -14,7 +17,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    if (stat(argv[2], &sb) == 0 && S_ISREG(sb.st_mode))
+    std::string emv_file_path(argv[1]);
+
+
+    if (stat(emv_file_path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
     {
         printf("It's a file");
     }
