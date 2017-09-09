@@ -9,10 +9,6 @@
 #include <stdio.h>
 #include "evm_file_header.h"
 
-const int magic_number_length = 8;
-const int header_param_number = 3;
-const int header_param_length = 4;
-const int header_length_in_bytes = magic_number_length + header_param_number * header_param_length;
 const char *magic_number = "ESET-VM2";
 
 EvmHeader::EvmHeader() {

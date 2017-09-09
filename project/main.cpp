@@ -14,11 +14,14 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "You did not provide file path.\n");
         exit(1);
     }
+
+    int execution_byte_number;
     std::vector<char> buffer;
     read_file_to_buffer(emv_file_path, buffer);
 
     EvmHeader header;
     header.read_header(buffer);
+    execution_byte_number = header_length_in_bytes;
 
     return 0;
 }
