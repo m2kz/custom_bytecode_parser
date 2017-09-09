@@ -15,13 +15,13 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    int execution_byte_number;
+    int execution_bit_number;
     std::vector<char> buffer;
     read_file_to_buffer(emv_file_path, buffer);
 
     EvmHeader header;
     header.read_header(buffer);
-    execution_byte_number = header_length_in_bytes;
+    execution_bit_number = header_length_in_bytes * 8;
 
     return 0;
 }

@@ -7,18 +7,26 @@
 
 #include <vector>
 #include <string>
-#include "opcodes.h"
+#include "instruction.h"
 
 class Executor {
 
 public:
-    void read_instruction(std::vector<char>);
+    void find_instruction(std::vector<char> &buffer);
+
+    void execute_instruction();
+
+    void find_params(std::vector<char> &buffer);
+
 
 private:
-    int start_byte;
+    int actual_byte;
+    int actual_bit;
     std::vector<char> operation_buffer;
     std::string instruction;
     std::vector<char> parameters;
+
+    int read_bit(std::vector<char> &buffer);
 };
 
 #endif //PROJECT_EXECUTOR_H
