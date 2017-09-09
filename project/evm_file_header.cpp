@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>
+#include <stdio.h>
 #include "evm_file_header.h"
 
 const int magic_number_length = 8;
@@ -26,7 +27,7 @@ void EvmHeader::read_header(std::vector<char> &buffer) {
     std::vector<char> header(buffer.begin(), buffer.begin() + header_length_in_bytes);
     std::vector<char> header_magic_number(header.begin(), header.begin() + magic_number_length);
     verify(header_magic_number);
-    for(int i = 0; i < header_magic_number.size(); i++) {
+    for (int i = 0; i < header_magic_number.size(); i++) {
         magic[i] = header_magic_number[i];
     }
     std::vector<char> header_code_size(header.begin() + magic_number_length,
@@ -41,16 +42,18 @@ void EvmHeader::read_header(std::vector<char> &buffer) {
 }
 
 void EvmHeader::verify(std::vector<char> &buffer) {
-    if (strcmp(buffer.data(), magic_number) != 0) {
+    char *buffer_char = buffer.data();
+    buffer_char[8] = '\0';
+    if (strcmp(buffer_char, magic_number) != 0) {
         fprintf(stderr, "You did not provide EVM file.\n");
         exit(1);
     }
 }
 
 uint32_t EvmHeader::extract_uint_32_value(std::vector<char> &buffer) {
-    std::stringstream string_stream;
-    string_stream << buffer.data();
+    char *buffer_char = buffer.data();
+    buffer_char[4] = '\0';
     uint32_t int_value;
-    string_stream >> int_value;
+    int_value = (buffer_char[3] << 24) | (buffer_char[2] << 16) | (buffer_char[1] << 8) | buffer_char[0];
     return int_value;
 }
