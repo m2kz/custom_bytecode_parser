@@ -7,24 +7,24 @@
 
 const static int ENDIANNESS = 7;
 
-void Executor::find_instruction() {
-    Instruction tmp_instrucion;
-    bool instruction_found = false;
+int Executor::find_instruction() {
+    bool found = false;
     std::string opcode;
+    std::vector<Instruction>::iterator instruction_iterator;
 
-    auto random = [&opcode](
+    auto run_instruction = [&opcode](
             const Instruction &ins) {
-        auto hur = ins;
         return ins.opcode == opcode;
     };
 
     do {
         int bit = read_bit();
         opcode.push_back((char) (bit + '0'));
-        std::find_if(std::begin(instructions), std::end(instructions), random) != std::end(instructions);
-    } while (!instruction_found);
-    random;
-    instruction = tmp_instrucion;
+        instruction_iterator = std::find_if(std::begin(instructions), std::end(instructions), run_instruction);
+        found = (instruction_iterator != std::end(instructions));
+    } while (!found);
+    instruction = *instruction_iterator;
+    return 0;
 }
 
 void Executor::execute_instruction() {

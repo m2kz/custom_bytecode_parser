@@ -12,7 +12,7 @@
 class Executor {
 
 public:
-    void find_instruction();
+    int find_instruction();
 
     void execute_instruction();
 
