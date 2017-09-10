@@ -28,7 +28,15 @@ void Executor::find_instruction() {
 }
 
 void Executor::execute_instruction() {
+    find_instruction();
+    for (int i = 0; i < instruction.param_list.length(); i++) {
+        if (instruction.param_list[i] == 'R') {
+            find_param();
+            int vec_id = reg_id_to_vector_id(parameters[i]);
+            int64_t register_value = vm_register[vec_id].value;
+        }
 
+    }
 }
 
 void Executor::find_param() {
@@ -43,6 +51,7 @@ void Executor::find_param() {
     } if (bit == 1) {
 // TODO: Implement memory access
     }
+    parameters.push_back(register_index);
 }
 
 /*

@@ -24,7 +24,7 @@ private:
     int actual_bit = 0;
     std::vector<char> operation_buffer;
     Instruction instruction;
-    std::vector<char> parameters;
+    std::vector<std::string> parameters;
     std::vector<char> &buffer_ref;
     int read_bit();
 };
