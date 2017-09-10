@@ -5,10 +5,15 @@
 #ifndef PROJECT_INSTRUCTION_H
 #define PROJECT_INSTRUCTION_H
 
+#include <functional>
+#include <iostream>
+#include <cstdarg>
+
 struct Instruction {
     std::string name;
     std::string opcode;
     std::string param_list;
+    std::function<void()> implementation;
 };
 
 std::vector<Instruction> instructions{{"mov",     "000",    "RR"},

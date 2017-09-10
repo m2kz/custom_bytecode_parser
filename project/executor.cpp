@@ -5,12 +5,12 @@
 #include "executor.h"
 #include "instruction.h"
 
-void Executor::find_instruction(std::vector<char> &buffer) {
+void Executor::find_instruction() {
     Instruction instrucion;
     bool instruction_found = false;
     std::string opcode;
     do {
-        int bit = read_bit(buffer);
+        int bit = read_bit();
         opcode.push_back((char) (bit + '0'));
         std::find_if(instructions.begin(), instructions.end(),
                      [&](const Instruction ins) {
@@ -30,16 +30,16 @@ void Executor::execute_instruction() {
 
 }
 
-void Executor::find_params(std::vector<char> &buffer) {
+void Executor::find_params() {
 
 }
 
 /*
  * Reads actual value of bit and moves to next
  */
-int Executor::read_bit(std::vector<char> &buffer) {
+int Executor::read_bit() {
     int mask = 1 << actual_bit;
-    int masked_byte = buffer[actual_byte] & mask;
+    int masked_byte = buffer_ref[actual_byte] & mask;
     int bit = masked_byte >> actual_bit;
     if (actual_bit != 7) {
         actual_bit++;

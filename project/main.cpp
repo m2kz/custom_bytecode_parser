@@ -2,6 +2,7 @@
 #include <vector>
 #include "commons.h"
 #include "evm_file_header.h"
+#include "executor.h"
 
 int main(int argc, char *argv[]) {
 
@@ -22,6 +23,8 @@ int main(int argc, char *argv[]) {
     EvmHeader header;
     header.read_header(buffer);
     execution_bit_number = header_length_in_bytes * 8;
+
+    Executor executor(buffer);
 
     return 0;
 }

@@ -7,26 +7,25 @@
 
 #include <vector>
 #include <string>
-#include "instruction.h"
 
 class Executor {
 
 public:
-    void find_instruction(std::vector<char> &buffer);
+    void find_instruction();
 
     void execute_instruction();
 
-    void find_params(std::vector<char> &buffer);
+    void find_params();
 
-
+    explicit Executor(std::vector<char> &buffer) : buffer_ref(buffer){}
 private:
-    int actual_byte;
-    int actual_bit;
+    int actual_byte = 0;
+    int actual_bit = 0;
     std::vector<char> operation_buffer;
     std::string instruction;
     std::vector<char> parameters;
-
-    int read_bit(std::vector<char> &buffer);
+    std::vector<char> &buffer_ref;
+    int read_bit();
 };
 
 #endif //PROJECT_EXECUTOR_H
