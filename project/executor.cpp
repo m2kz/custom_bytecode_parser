@@ -3,10 +3,10 @@
 //
 #include <algorithm>
 #include "executor.h"
-#include "instruction.h"
+#include "registers.h"
 
 void Executor::find_instruction() {
-    Instruction instrucion;
+    Instruction tmp_instrucion;
     bool instruction_found = false;
     std::string opcode;
     do {
@@ -15,7 +15,7 @@ void Executor::find_instruction() {
         std::find_if(instructions.begin(), instructions.end(),
                      [&](const Instruction ins) {
                          if (ins.opcode == opcode) {
-                             instrucion = ins;
+                             tmp_instrucion = ins;
                              instruction_found = true;
                              return 0;
                          } else {
@@ -24,14 +24,25 @@ void Executor::find_instruction() {
                          }
                      });
     } while (!instruction_found);
+    instruction = tmp_instrucion;
 }
 
 void Executor::execute_instruction() {
 
 }
 
-void Executor::find_params() {
+void Executor::find_param() {
+    int bit = read_bit();
+    std::string register_index;
+    if (bit == 0) {
+        for (int i = 0; i < 4; i++) {
+            bit = read_bit();
+            register_index.push_back((char) (bit + '0'));
+        }
 
+    } if (bit == 1) {
+// TODO: Implement memory access
+    }
 }
 
 /*

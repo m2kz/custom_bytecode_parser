@@ -16,13 +16,15 @@ struct Instruction {
     std::function<void()> implementation;
 };
 
-std::vector<Instruction> instructions{{"mov",     "000",    "RR"},
-                                      {"add",     "010001", "RRR"},
-                                      {"sub",     "010010", "RRR"},
-                                      {"div",     "010011", "RRR"},
-                                      {"mod",     "010100", "RRR"},
-                                      {"mul",     "010101", "RRR"},
-                                      {"compare", "01100",  "RRR"},
-                                      {"hlt",     "10110",  ""}};
+
+static std::vector<Instruction> instructions{{"mov",       "000",    "RR"},
+                                             {"add",       "010001", "RRR"},
+                                             {"sub",       "010010", "RRR"},
+                                             {"div",       "010011", "RRR"},
+                                             {"mod",       "010100", "RRR"},
+                                             {"mul",       "010101", "RRR"},
+                                             {"compare",   "01100",  "RRR"},
+                                             {"hlt",       "10110",  ""},
+                                             {"loadConst", "001",    "CR"}};
 
 #endif //PROJECT_OPCODES_H

@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include "instruction.h"
 
 class Executor {
 
@@ -15,14 +16,14 @@ public:
 
     void execute_instruction();
 
-    void find_params();
+    void find_param();
 
     explicit Executor(std::vector<char> &buffer) : buffer_ref(buffer){}
 private:
     int actual_byte = 0;
     int actual_bit = 0;
     std::vector<char> operation_buffer;
-    std::string instruction;
+    Instruction instruction;
     std::vector<char> parameters;
     std::vector<char> &buffer_ref;
     int read_bit();
