@@ -29,14 +29,22 @@ void Executor::find_instruction() {
 
 void Executor::execute_instruction() {
     find_instruction();
-    for (int i = 0; i < instruction.param_list.length(); i++) {
+    int params_number = instruction.param_list.length();
+    // TODO: Implement gathering parameters
+    int64_t param1;
+    VMRegister param2;
+    for (int i = 0; i < params_number; i++) {
         if (instruction.param_list[i] == 'R') {
             find_param();
             int vec_id = reg_id_to_vector_id(parameters[i]);
-            int64_t register_value = vm_register[vec_id].value;
+            VMRegister param2 = vm_register[vec_id];
+        } if (instruction.param_list[i] == 'C') {
+            find_param();
+            int64_t param1 = 0x100;
         }
 
     }
+    instruction.con_reg(param1, param2);
 }
 
 void Executor::find_param() {

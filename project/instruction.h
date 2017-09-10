@@ -32,7 +32,7 @@ static std::vector<Instruction> instructions{{"mov",       "000",    "RR"},
                                              {"compare",   "01100",  "RRR"},
                                              {"hlt",       "10110",  ""},
                                              {"loadConst", "001",    "CR", [](int64_t constant,
-                                                                              VMRegister &vm_register) { vm_register.value = constant; }}
+                                                                              VMRegister &vm_register) { vm_register.value = constant; printf("works"); }}
 };
 
 #endif //PROJECT_OPCODES_H

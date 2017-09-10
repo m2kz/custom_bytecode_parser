@@ -16,15 +16,16 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    int execution_bit_number;
+    int execution_byte_number;
     std::vector<char> buffer;
     read_file_to_buffer(emv_file_path, buffer);
 
     EvmHeader header;
     header.read_header(buffer);
-    execution_bit_number = header_length_in_bytes * 8;
-
-    Executor executor(buffer);
+    execution_byte_number = header_length_in_bytes;
+    std::vector<char> random_part(buffer.begin() + header_length_in_bytes, buffer.begin() + header_length_in_bytes + 3);
+    Executor executor(random_part);
+    executor.execute_instruction();
 
     return 0;
 }
