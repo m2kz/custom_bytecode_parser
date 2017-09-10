@@ -16,7 +16,9 @@ public:
 
     void execute_instruction();
 
-    void find_param();
+    void find_reg_id();
+
+    void find_const_value();
 
     explicit Executor(std::vector<char> &buffer) : buffer_ref(buffer){}
 private:

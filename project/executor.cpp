@@ -7,6 +7,27 @@
 
 const static int ENDIANNESS = 7;
 
+void Executor::execute_instruction() {
+    find_instruction();
+    auto params_number = instruction.param_list.length();
+    // TODO: Implement gathering parameters
+    int64_t param1;
+    VMRegister param2;
+    for (int i = 0; i < params_number; i++) {
+        if (instruction.param_list[i] == 'R') {
+            find_reg_id();
+            int vec_id = reg_id_to_vector_id(parameters[i]);
+            param2 = vm_register[vec_id];
+        }
+        if (instruction.param_list[i] == 'C') {
+            find_const_value();
+            param1 = 0x100;
+        }
+
+    }
+    instruction.con_reg(param1, param2);
+}
+
 int Executor::find_instruction() {
     bool found = false;
     std::string opcode;
@@ -27,28 +48,17 @@ int Executor::find_instruction() {
     return 0;
 }
 
-void Executor::execute_instruction() {
-    find_instruction();
-    int params_number = instruction.param_list.length();
-    // TODO: Implement gathering parameters
-    int64_t param1;
-    VMRegister param2;
-    for (int i = 0; i < params_number; i++) {
-        if (instruction.param_list[i] == 'R') {
-            find_param();
-            int vec_id = reg_id_to_vector_id(parameters[i]);
-            VMRegister param2 = vm_register[vec_id];
-        }
-        if (instruction.param_list[i] == 'C') {
-            find_param();
-            int64_t param1 = 0x100;
-        }
-
+void Executor::find_const_value() {
+    std::string const_value;
+    for (int i = 0; i < 64; i++) {
+        int bit = read_bit();
+        const_value.push_back((char) (bit + '0'));
     }
-    instruction.con_reg(param1, param2);
+    std::reverse(const_value.begin(), const_value.end());
+    parameters.push_back(const_value);
 }
 
-void Executor::find_param() {
+void Executor::find_reg_id() {
     int bit = read_bit();
     std::string register_index;
     if (bit == 0) {

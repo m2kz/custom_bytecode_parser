@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     EvmHeader header;
     header.read_header(buffer);
     execution_byte_number = header_length_in_bytes;
-    std::vector<char> random_part(buffer.begin() + header_length_in_bytes, buffer.begin() + header_length_in_bytes + 3);
+    std::vector<char> random_part(buffer.begin() + header_length_in_bytes, buffer.end());
     Executor executor(random_part);
     executor.execute_instruction();
 
