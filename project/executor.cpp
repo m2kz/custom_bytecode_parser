@@ -5,25 +5,25 @@
 #include "executor.h"
 #include "registers.h"
 
+const static int ENDIANNESS = 7;
+
 void Executor::find_instruction() {
     Instruction tmp_instrucion;
     bool instruction_found = false;
     std::string opcode;
+
+    auto random = [&opcode](
+            const Instruction &ins) {
+        auto hur = ins;
+        return ins.opcode == opcode;
+    };
+
     do {
         int bit = read_bit();
         opcode.push_back((char) (bit + '0'));
-        std::find_if(instructions.begin(), instructions.end(),
-                     [&](const Instruction ins) {
-                         if (ins.opcode == opcode) {
-                             tmp_instrucion = ins;
-                             instruction_found = true;
-                             return 0;
-                         } else {
-                             instruction_found = false;
-                             return -1;
-                         }
-                     });
+        std::find_if(std::begin(instructions), std::end(instructions), random) != std::end(instructions);
     } while (!instruction_found);
+    random;
     instruction = tmp_instrucion;
 }
 
@@ -38,7 +38,8 @@ void Executor::execute_instruction() {
             find_param();
             int vec_id = reg_id_to_vector_id(parameters[i]);
             VMRegister param2 = vm_register[vec_id];
-        } if (instruction.param_list[i] == 'C') {
+        }
+        if (instruction.param_list[i] == 'C') {
             find_param();
             int64_t param1 = 0x100;
         }
@@ -56,7 +57,8 @@ void Executor::find_param() {
             register_index.push_back((char) (bit + '0'));
         }
 
-    } if (bit == 1) {
+    }
+    if (bit == 1) {
 // TODO: Implement memory access
     }
     parameters.push_back(register_index);
@@ -66,9 +68,10 @@ void Executor::find_param() {
  * Reads actual value of bit and moves to next
  */
 int Executor::read_bit() {
-    int mask = 1 << actual_bit;
+    int shift_value = ENDIANNESS - actual_bit;
+    int mask = 1 << shift_value;
     int masked_byte = buffer_ref[actual_byte] & mask;
-    int bit = masked_byte >> actual_bit;
+    int bit = masked_byte >> shift_value;
     if (actual_bit != 7) {
         actual_bit++;
     } else {
