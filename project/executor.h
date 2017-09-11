@@ -20,17 +20,23 @@ public:
 
     void find_const_value();
 
-    explicit Executor(std::vector<char> &buffer) : buffer_ref(buffer){}
+    int get_actual_bit();
+
+    void set_actual_bit(int current_bit);
+
+    void reset();
+
+    explicit Executor(std::vector<char> &buffer) : buffer_ref(buffer) {}
+
 private:
     int actual_byte = 0;
     int actual_bit = 0;
-    std::vector<char> operation_buffer;
     Instruction instruction;
     std::vector<std::string> parameters;
     std::vector<char> &buffer_ref;
+
     int read_bit();
 };
-
 
 
 #endif //PROJECT_EXECUTOR_H

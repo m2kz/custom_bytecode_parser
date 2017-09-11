@@ -16,16 +16,21 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    int execution_byte_number;
     std::vector<char> buffer;
     read_file_to_buffer(emv_file_path, buffer);
-
     EvmHeader header;
     header.read_header(buffer);
-    execution_byte_number = header_length_in_bytes;
-    std::vector<char> random_part(buffer.begin() + header_length_in_bytes, buffer.end());
-    Executor executor(random_part);
-    executor.execute_instruction();
+    Executor executor(buffer);
+
+    // TODO: Create class `Runner` to manage execution
+    int executed_bit = 8 * header_length_in_bytes;
+    executor.set_actual_bit(executed_bit);
+    do {
+        executor.reset();
+        executor.set_actual_bit(executed_bit);
+        executor.execute_instruction();
+        executed_bit = executor.get_actual_bit();
+    } while(1);
 
     return 0;
 }

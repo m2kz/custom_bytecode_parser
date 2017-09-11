@@ -5,7 +5,7 @@
 #include "executor.h"
 #include "registers.h"
 
-const static int ENDIANNESS = 7;
+const static int ORDER = 7;
 
 void Executor::execute_instruction() {
     find_instruction();
@@ -21,7 +21,8 @@ void Executor::execute_instruction() {
         }
         if (instruction.param_list[i] == 'C') {
             find_const_value();
-            param1 = 0x100;
+            int int_val = std::stoi(parameters[i], nullptr, 2);
+            param1 = int_val;
         }
 
     }
@@ -78,7 +79,7 @@ void Executor::find_reg_id() {
  * Reads actual value of bit and moves to next
  */
 int Executor::read_bit() {
-    int shift_value = ENDIANNESS - actual_bit;
+    int shift_value = ORDER - actual_bit;
     int mask = 1 << shift_value;
     int masked_byte = buffer_ref[actual_byte] & mask;
     int bit = masked_byte >> shift_value;
@@ -90,4 +91,19 @@ int Executor::read_bit() {
     }
 
     return bit;
+}
+
+void Executor::set_actual_bit(int current_bit) {
+    actual_byte = current_bit / 8;
+    actual_bit = current_bit % 8;
+}
+
+int Executor::get_actual_bit() {
+    return 8 * actual_byte + actual_bit;
+}
+
+void Executor::reset() {
+    actual_bit = 0;
+    actual_byte = 0;
+    parameters.clear();
 }

@@ -20,6 +20,15 @@ struct Instruction {
                        VMRegister &vm_register2, VMRegister &vm_register3)> reg_reg_reg;
     std::function<void(VMRegister &vm_register1,
                        VMRegister &vm_register2)> reg_reg;
+
+    ~Instruction() {
+        name = "";
+        opcode = "";
+        param_list = "";
+        con_reg = 0;
+        reg_reg = 0;
+        reg_reg_reg = 0;
+    }
 };
 
 
