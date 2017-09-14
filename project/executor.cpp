@@ -10,23 +10,26 @@ const static int ORDER = 7;
 void Executor::execute_instruction() {
     find_instruction();
     auto params_number = instruction.param_list.length();
-    // TODO: Implement gathering parameters
-    int64_t param1;
-    VMRegister param2;
+    int64_t constant_arg;
+    std::vector<VMRegister> register_args;
+    int32_t label_arg;
     for (int i = 0; i < params_number; i++) {
         if (instruction.param_list[i] == 'R') {
             find_reg_id();
             int vec_id = reg_id_to_vector_id(parameters[i]);
-            param2 = vm_register[vec_id];
+            register_args.push_back(vm_register[vec_id]);
         }
         if (instruction.param_list[i] == 'C') {
             find_const_value();
             int int_val = std::stoi(parameters[i], nullptr, 2);
-            param1 = int_val;
+            constant_arg = int_val;
         }
 
     }
-    instruction.con_reg(param1, param2);
+    if (instruction.param_list == "CR") {
+        instruction.implementation(constant_arg, label_arg, register_args);
+    }
+
 }
 
 int Executor::find_instruction() {

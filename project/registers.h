@@ -10,7 +10,9 @@
 #include <vector>
 
 struct VMRegister {
-    int64_t value = 0;
+    int64_t value;
+
+    VMRegister()=default;
 };
 
 static std::vector<VMRegister> vm_register(16);
