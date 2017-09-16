@@ -2,8 +2,8 @@
 // Created by michal on 09.09.17.
 //
 #include <algorithm>
+#include <memory>
 #include "executor.h"
-#include "registers.h"
 
 const static int ORDER = 7;
 
@@ -11,13 +11,13 @@ void Executor::execute_instruction() {
     find_instruction();
     auto params_number = instruction.param_list.length();
     int64_t constant_arg;
-    std::vector<VMRegister> register_args;
+    std::vector<std::shared_ptr<VMRegister>> register_args;
     int32_t label_arg;
     for (int i = 0; i < params_number; i++) {
         if (instruction.param_list[i] == 'R') {
             find_reg_id();
             int vec_id = reg_id_to_vector_id(parameters[i]);
-            register_args.push_back(vm_register[vec_id]);
+            register_args.push_back(vm_registers[vec_id]);
         }
         if (instruction.param_list[i] == 'C') {
             find_const_value();
@@ -26,10 +26,7 @@ void Executor::execute_instruction() {
         }
 
     }
-    if (instruction.param_list == "CR") {
         instruction.implementation(constant_arg, label_arg, register_args);
-    }
-
 }
 
 int Executor::find_instruction() {

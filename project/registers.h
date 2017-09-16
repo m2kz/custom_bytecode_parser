@@ -12,10 +12,8 @@
 struct VMRegister {
     int64_t value;
 
-    VMRegister()=default;
+    explicit VMRegister(int64_t value): value(value){}
 };
-
-static std::vector<VMRegister> vm_register(16);
 
 static int reg_id_to_vector_id(std::string reg_id) {
     if (reg_id == "0000") return 0;

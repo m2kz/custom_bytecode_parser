@@ -26,7 +26,8 @@ public:
 
     void reset();
 
-    explicit Executor(std::vector<char> &buffer) : buffer_ref(buffer) {}
+    explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> vm_registers) : buffer_ref(buffer),
+                                                                                          vm_registers(vm_registers) {}
 
 private:
     int actual_byte = 0;
@@ -34,6 +35,7 @@ private:
     Instruction instruction;
     std::vector<std::string> parameters;
     std::vector<char> &buffer_ref;
+    std::vector<std::shared_ptr<VMRegister>> vm_registers;
 
     int read_bit();
 };
