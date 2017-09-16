@@ -53,3 +53,7 @@ uint32_t EvmHeader::extract_uint_32_value(std::vector<char> &buffer) {
     int_value = (buffer_char[3] << 24) | (buffer_char[2] << 16) | (buffer_char[1] << 8) | buffer_char[0];
     return int_value;
 }
+
+uint32_t EvmHeader::get_data_size() {
+    return data_size;
+}

@@ -20,6 +20,7 @@ public:
     EvmHeader();
 
     void read_header(std::vector<char> &buffer);
+    uint32_t get_data_size();
 
 private:
     char magic[8];

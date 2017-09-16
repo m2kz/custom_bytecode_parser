@@ -3,12 +3,13 @@
 #include "commons.h"
 #include "evm_file_header.h"
 #include "executor.h"
+#include "memory.h"
 
 int main(int argc, char *argv[]) {
 
     std::vector<std::shared_ptr<VMRegister>> vm_registers;
-    for (int i = 0; i < 16; i ++) {
-        std::shared_ptr<VMRegister> vm_register {new VMRegister(0)};
+    for (int i = 0; i < 16; i++) {
+        std::shared_ptr<VMRegister> vm_register{new VMRegister(0)};
         vm_registers.push_back(std::move(vm_register));
     }
 
@@ -26,7 +27,9 @@ int main(int argc, char *argv[]) {
     read_file_to_buffer(emv_file_path, buffer);
     EvmHeader header;
     header.read_header(buffer);
-    Executor executor(buffer, vm_registers);
+    Memory memory(header.get_data_size());
+    memory.initialize();
+    Executor executor(buffer, vm_registers, memory);
 
     // TODO: Create class `Runner` to manage execution
     int executed_bit = 8 * header_length_in_bytes;

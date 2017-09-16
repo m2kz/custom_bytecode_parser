@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include "instruction.h"
+#include "memory.h"
 
 class Executor {
 
@@ -16,7 +17,7 @@ public:
 
     void execute_instruction();
 
-    void find_reg_id();
+    void find_argument();
 
     void find_const_value();
 
@@ -26,8 +27,9 @@ public:
 
     void reset();
 
-    explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> vm_registers) : buffer_ref(buffer),
-                                                                                          vm_registers(vm_registers) {}
+    explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> &vm_registers, Memory &memory)
+            : buffer_ref(buffer),
+              vm_registers(vm_registers), memory(memory) {}
 
 private:
     int actual_byte = 0;
@@ -35,7 +37,8 @@ private:
     Instruction instruction;
     std::vector<std::string> parameters;
     std::vector<char> &buffer_ref;
-    std::vector<std::shared_ptr<VMRegister>> vm_registers;
+    std::vector<std::shared_ptr<VMRegister>> &vm_registers;
+    Memory &memory;
 
     int read_bit();
 };

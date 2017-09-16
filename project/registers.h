@@ -20,6 +20,10 @@ static int reg_id_to_vector_id(std::string reg_id) {
     if (reg_id == "1000") return 1;
     if (reg_id == "0100") return 2;
     if (reg_id == "1100") return 3;
+    if (reg_id == "0010") return 4;
+    if (reg_id == "1010") return 5;
+    if (reg_id == "0110") return 6;
+    if (reg_id == "1110") return 7;
 };
 
 #endif //PROJECT_REGISTERS_H

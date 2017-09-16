@@ -15,9 +15,15 @@ void Executor::execute_instruction() {
     int32_t label_arg;
     for (int i = 0; i < params_number; i++) {
         if (instruction.param_list[i] == 'R') {
-            find_reg_id();
-            int vec_id = reg_id_to_vector_id(parameters[i]);
-            register_args.push_back(vm_registers[vec_id]);
+            find_argument();
+            if (parameters[i].size() == 4) {
+                int vec_id = reg_id_to_vector_id(parameters[i]);
+                register_args.push_back(vm_registers[vec_id]);
+            }
+            if (parameters[i].size() == 6) {
+                int vec_id = reg_id_to_vector_id(parameters[i]);
+                register_args.push_back(vm_registers[vec_id]);
+            }
         }
         if (instruction.param_list[i] == 'C') {
             find_const_value();
@@ -59,7 +65,7 @@ void Executor::find_const_value() {
     parameters.push_back(const_value);
 }
 
-void Executor::find_reg_id() {
+void Executor::find_argument() {
     int bit = read_bit();
     std::string register_index;
     if (bit == 0) {
@@ -67,10 +73,12 @@ void Executor::find_reg_id() {
             bit = read_bit();
             register_index.push_back((char) (bit + '0'));
         }
-
     }
     if (bit == 1) {
-// TODO: Implement memory access
+        for (int i = 0; i < 6; i++) {
+            bit = read_bit();
+            register_index.push_back((char) (bit + '0'));
+        }
     }
     parameters.push_back(register_index);
 }
