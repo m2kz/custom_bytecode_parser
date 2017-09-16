@@ -8,6 +8,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <iomanip>
 #include "registers.h"
 
 struct Instruction {
@@ -69,7 +70,7 @@ static std::vector<Instruction> instructions{{"mov",          "000",    "RR"},
                                              },
                                              {"consoleWrite", "10011",  "R",   [](int64_t constant, int32_t,
                                                                                   std::vector<std::shared_ptr<VMRegister>> vm_register) {
-                                                 std::cout << vm_register[0].get()->value << std::endl;
+                                                 std::cout << std::hex << std::setw(16) << std::setfill('0') <<  vm_register[0].get()->value << std::endl;
                                              }
                                              }
 };
