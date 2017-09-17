@@ -17,8 +17,8 @@ enum DataType {
 
 static int id_to_data_type(std::string reg_id) {
     if (reg_id == "00") return Byte;
-    if (reg_id == "01") return Word;
-    if (reg_id == "10") return Dword;
+    if (reg_id == "10") return Word;
+    if (reg_id == "01") return Dword;
     if (reg_id == "11") return Qword;
 }
 
@@ -26,11 +26,11 @@ class Memory {
 public:
     explicit Memory(unsigned long size) : size(size) {}
     void initialize();
-    void save_data(std::vector<char>, int offset);
-    std::vector<char> access_data(int offset, DataType data_type);
+    void save_data(std::vector<unsigned char>, int offset);
+    std::vector<unsigned char> access_data(int offset, DataType data_type);
 private:
     unsigned long size;
-    std::vector<char> stored_data;
+    std::vector<unsigned char> stored_data;
 };
 
 #endif //PROJECT_MEMORY_H

@@ -3,7 +3,10 @@
 //
 #include <algorithm>
 #include <memory>
+#include <cstring>
 #include "executor.h"
+#include "argument.h"
+#include "commons.h"
 
 const static int ORDER = 7;
 
@@ -11,28 +14,83 @@ void Executor::execute_instruction() {
     find_instruction();
     auto params_number = instruction.param_list.length();
     int64_t constant_arg;
-    std::vector<std::shared_ptr<VMRegister>> register_args;
+    std::vector<std::shared_ptr<Argument>> arguments;
     int32_t label_arg;
     for (int i = 0; i < params_number; i++) {
         if (instruction.param_list[i] == 'R') {
             find_argument();
             if (parameters[i].size() == 4) {
                 int vec_id = reg_id_to_vector_id(parameters[i]);
-                register_args.push_back(vm_registers[vec_id]);
+                std::shared_ptr<Argument> argument{new Argument(vec_id, vm_registers[vec_id].get()->value)};
+                arguments.push_back(std::move(argument));
             }
             if (parameters[i].size() == 6) {
-                int vec_id = reg_id_to_vector_id(parameters[i]);
-                register_args.push_back(vm_registers[vec_id]);
+                std::string raw_data_type = std::string(parameters[i].begin(), parameters[i].begin() + 2);
+                std::string raw_offset = std::string(parameters[i].begin() + 2, parameters[i].begin() + 6);
+                DataType data_type = (DataType) id_to_data_type(raw_data_type);
+                int reg_id = reg_id_to_vector_id(raw_offset);
+                int64_t reg_value = vm_registers[reg_id].get()->value;
+                std::vector<unsigned char> memory_argument = memory.access_data(reg_value, data_type);
+                std::stringstream ss;
+                std::string string_argument;
+                for(unsigned char cell : memory_argument) {
+                    int cell_int = (int)cell;
+                    ss << std::hex << cell_int;
+                    if (cell_int == 0) {
+                        ss << std::hex << cell_int;
+                    }
+                    string_argument += ss.str();
+                    ss.str("");
+                }
+                const char *const_argument = string_argument.c_str();
+                long long int memory_value = strtoll(const_argument, nullptr, 16);
+                std::shared_ptr<Argument> argument{new Argument(data_type, reg_id, memory_value)};
+                arguments.push_back(std::move(argument));
             }
         }
         if (instruction.param_list[i] == 'C') {
             find_const_value();
-            int int_val = std::stoi(parameters[i], nullptr, 2);
+            int64_t int_val = std::stol(parameters[i], nullptr, 2);
             constant_arg = int_val;
         }
 
     }
-        instruction.implementation(constant_arg, label_arg, register_args);
+    instruction.implementation(constant_arg, label_arg, arguments);
+    for (std::shared_ptr<Argument> argument : arguments) {
+        if (argument.get()->arg_type == RegisterType) {
+            vm_registers[argument.get()->reg_id]->value = argument.get()->value;
+        }
+        if (argument.get()->arg_type == MemoryType) {
+            std::string string_value = std::to_string(argument.get()->value);
+            std::vector<unsigned char> data;
+            if (argument.get()->data_type == Byte) {
+                int8_t value = (int8_t) atoll(string_value.c_str());
+                if (data.size() < sizeof(value))
+                    data.resize(sizeof(value));
+                std::memcpy(data.data(), &value, sizeof(value));
+            }
+            if (argument.get()->data_type == Word) {
+                int16_t value = (int16_t) atoll(string_value.c_str());
+                if (data.size() < sizeof(value))
+                    data.resize(sizeof(value));
+                std::memcpy(data.data(), &value, sizeof(value));
+            }
+            if (argument.get()->data_type == Dword) {
+                int32_t value = (int32_t) atoll(string_value.c_str());
+                if (data.size() < sizeof(value))
+                    data.resize(sizeof(value));
+                std::memcpy(data.data(), &value, sizeof(value));
+            }
+            if (argument.get()->data_type == Qword) {
+                long long int value = (int64_t) atoll(string_value.c_str());
+                if (data.size() < sizeof(value))
+                    data.resize(sizeof(value));
+                std::memcpy(data.data(), &value, sizeof(value));
+            }
+            std::reverse(data.begin(), data.end());
+            memory.save_data(data, argument.get()->addr_reg_id);
+        }
+    }
 }
 
 int Executor::find_instruction() {
@@ -86,6 +144,7 @@ void Executor::find_argument() {
 /*
  * Reads actual value of bit and moves to next
  */
+
 int Executor::read_bit() {
     int shift_value = ORDER - actual_bit;
     int mask = 1 << shift_value;

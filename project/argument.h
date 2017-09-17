@@ -9,23 +9,46 @@
 #include "registers.h"
 #include "memory.h"
 
-enum ArgumentType {
+enum ArgType {
     RegisterType,
     MemoryType
 };
 
-/*
- * Storing argument and its type. Used to unify different type of argument received from one source.
- */
-
-struct Argument {
+class ArgumentRegister {
 public:
-    void access();
+    ArgumentRegister() {}
+
+    explicit ArgumentRegister(int reg_id) : reg_id(reg_id) {}
+
+    int reg_id;
 private:
-    std::vector<char> raw_argument;
-    std::vector<std::shared_ptr<VMRegister>> vm_registers;
-    Memory memory;
-    ArgumentType argument_type;
+
+};
+
+class ArgumentMemory {
+public:
+    ArgumentMemory() {}
+
+    explicit ArgumentMemory(DataType data_type, int addr_reg_id) : data_type(data_type), addr_reg_id(addr_reg_id) {}
+
+    DataType data_type;
+    int addr_reg_id;
+private:
+
+};
+
+class Argument : public ArgumentMemory, public ArgumentRegister {
+public:
+    explicit Argument(int reg_id, int64_t value) : ArgumentRegister(reg_id), value(value), arg_type(RegisterType) {}
+
+    explicit Argument(DataType data_type, int addr_reg_id, int64_t value) : ArgumentMemory(data_type, addr_reg_id),
+                                                                            value(value), arg_type(MemoryType) {}
+
+    int64_t value;
+    ArgType arg_type;
+
+private:
+
 };
 
 #endif //PROJECT_ARGUMENT_H
