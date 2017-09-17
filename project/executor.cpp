@@ -43,8 +43,8 @@ void Executor::execute_instruction() {
                     ss.str("");
                 }
                 const char *const_argument = string_argument.c_str();
-                long long int memory_value = strtoll(const_argument, nullptr, 16);
-                std::shared_ptr<Argument> argument{new Argument(data_type, reg_id, memory_value)};
+                uint64_t memory_value = (uint64_t)strtoull(const_argument, nullptr, 16);
+                std::shared_ptr<Argument> argument{new Argument(data_type, reg_value, memory_value)};
                 arguments.push_back(std::move(argument));
             }
         }
@@ -82,13 +82,14 @@ void Executor::execute_instruction() {
                 std::memcpy(data.data(), &value, sizeof(value));
             }
             if (argument.get()->data_type == Qword) {
-                long long int value = (int64_t) atoll(string_value.c_str());
+                //uint64_t value = (uint64_t) atoll(string_value.c_str());
+                uint64_t value = (uint64_t)strtoull(string_value.c_str(), nullptr, 10);
                 if (data.size() < sizeof(value))
                     data.resize(sizeof(value));
                 std::memcpy(data.data(), &value, sizeof(value));
             }
             std::reverse(data.begin(), data.end());
-            memory.save_data(data, argument.get()->addr_reg_id);
+            memory.save_data(data, argument.get()->offset);
         }
     }
 }

@@ -9,9 +9,16 @@ void Memory::initialize() {
 }
 
 void Memory::save_data(std::vector<unsigned char> data, int offset) {
-    stored_data.assign(data.begin() + offset, data.end());
+    for (int i = size, y = data.size(); y != 0; i--, y--) {
+        stored_data[i - 1 - offset] = data[y - 1];
+    }
 }
 
 std::vector<unsigned char> Memory::access_data(int offset, DataType data_type) {
-    return std::vector<unsigned char>(&stored_data[offset], &stored_data[offset + data_type]);
+    std::vector<unsigned char> accessed_data;
+    for (int i = 0; i < data_type; i++) {
+        auto value = stored_data[size - data_type - offset + i];
+        accessed_data.push_back(value);
+    }
+    return accessed_data;
 }

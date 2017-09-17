@@ -29,22 +29,22 @@ class ArgumentMemory {
 public:
     ArgumentMemory() {}
 
-    explicit ArgumentMemory(DataType data_type, int addr_reg_id) : data_type(data_type), addr_reg_id(addr_reg_id) {}
+    explicit ArgumentMemory(DataType data_type, int offset) : data_type(data_type), offset(offset) {}
 
     DataType data_type;
-    int addr_reg_id;
+    int offset;
 private:
 
 };
 
 class Argument : public ArgumentMemory, public ArgumentRegister {
 public:
-    explicit Argument(int reg_id, int64_t value) : ArgumentRegister(reg_id), value(value), arg_type(RegisterType) {}
+    explicit Argument(int reg_id, uint64_t value) : ArgumentRegister(reg_id), value(value), arg_type(RegisterType) {}
 
-    explicit Argument(DataType data_type, int addr_reg_id, int64_t value) : ArgumentMemory(data_type, addr_reg_id),
+    explicit Argument(DataType data_type, int offset, uint64_t value) : ArgumentMemory(data_type, offset),
                                                                             value(value), arg_type(MemoryType) {}
 
-    int64_t value;
+    uint64_t value;
     ArgType arg_type;
 
 private:
