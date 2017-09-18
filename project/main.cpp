@@ -1,9 +1,4 @@
-#include <iostream>
-#include <vector>
-#include "commons.h"
-#include "evm_file_header.h"
-#include "executor.h"
-#include "memory.h"
+#include "main.h"
 
 int main(int argc, char *argv[]) {
 
@@ -30,17 +25,13 @@ int main(int argc, char *argv[]) {
     Memory memory(header.get_data_size());
     memory.initialize();
     Executor executor(buffer, vm_registers, memory);
+    Runner runner(executor, header.get_size_of_file());
 
-    // TODO: Create class `Runner` to manage execution
-    int executed_bit = 8 * header_length_in_bytes;
-    executor.set_actual_bit(executed_bit);
+    const int executed_bit = 8 * header_length_in_bytes;
+    runner.set_executed_bit(executed_bit);
     do {
-        executor.reset();
-        executor.set_actual_bit(executed_bit);
-        executor.execute_instruction();
-        executed_bit = executor.get_actual_bit();
-    } while (1);
-
+        runner.process_instruction();
+    } while (!runner.check_program_end());
 
     return 0;
 }

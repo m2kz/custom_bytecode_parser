@@ -13,6 +13,10 @@
 class Executor {
 
 public:
+    explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> &vm_registers, Memory &memory)
+            : buffer_ref(buffer),
+              vm_registers(vm_registers), memory(memory) {}
+
     int find_instruction();
 
     void execute_instruction();
@@ -21,15 +25,16 @@ public:
 
     void find_const_value();
 
+    void process_register_argument(std::string raw_parameter);
+
+    void process_memory_argument(std::string raw_parameter);
+
     int get_actual_bit();
 
     void set_actual_bit(int current_bit);
 
     void reset();
 
-    explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> &vm_registers, Memory &memory)
-            : buffer_ref(buffer),
-              vm_registers(vm_registers), memory(memory) {}
 
 private:
     int actual_byte = 0;

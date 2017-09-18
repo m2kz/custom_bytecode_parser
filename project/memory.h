@@ -25,9 +25,17 @@ static int id_to_data_type(std::string reg_id) {
 class Memory {
 public:
     explicit Memory(unsigned long size) : size(size) {}
+
     void initialize();
+
     void save_data(std::vector<unsigned char>, int offset);
+
     std::vector<unsigned char> access_data(int offset, DataType data_type);
+
+    uint64_t memory_to_int(std::vector<unsigned char> memory_slice);
+
+    void int_to_memory(int64_t memory_int);
+
 private:
     unsigned long size;
     std::vector<unsigned char> stored_data;

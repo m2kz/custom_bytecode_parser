@@ -11,39 +11,28 @@
 const static int ORDER = 7;
 
 void Executor::execute_instruction() {
-    find_instruction();
-    auto params_number = instruction.param_list.length();
     int64_t constant_arg;
     std::vector<std::shared_ptr<Argument>> arguments;
     int32_t label_arg;
+    find_instruction();
+    auto params_number = instruction.param_list.length();
     for (int i = 0; i < params_number; i++) {
         if (instruction.param_list[i] == 'R') {
             find_argument();
             if (parameters[i].size() == 4) {
-                int vec_id = reg_id_to_vector_id(parameters[i]);
+                std::string raw_reg_id = parameters[i];
+                int vec_id = reg_id_to_vector_id(raw_reg_id);
                 std::shared_ptr<Argument> argument{new Argument(vec_id, vm_registers[vec_id].get()->value)};
                 arguments.push_back(std::move(argument));
             }
             if (parameters[i].size() == 6) {
                 std::string raw_data_type = std::string(parameters[i].begin(), parameters[i].begin() + 2);
-                std::string raw_offset = std::string(parameters[i].begin() + 2, parameters[i].begin() + 6);
+                std::string raw_reg_id = std::string(parameters[i].begin() + 2, parameters[i].begin() + 6);
                 DataType data_type = (DataType) id_to_data_type(raw_data_type);
-                int reg_id = reg_id_to_vector_id(raw_offset);
+                int reg_id = reg_id_to_vector_id(raw_reg_id);
                 int64_t reg_value = vm_registers[reg_id].get()->value;
                 std::vector<unsigned char> memory_argument = memory.access_data(reg_value, data_type);
-                std::stringstream ss;
-                std::string string_argument;
-                for(unsigned char cell : memory_argument) {
-                    int cell_int = (int)cell;
-                    ss << std::hex << cell_int;
-                    if (cell_int == 0) {
-                        ss << std::hex << cell_int;
-                    }
-                    string_argument += ss.str();
-                    ss.str("");
-                }
-                const char *const_argument = string_argument.c_str();
-                uint64_t memory_value = (uint64_t)strtoull(const_argument, nullptr, 16);
+                uint64_t memory_value = memory.memory_to_int(memory_argument);
                 std::shared_ptr<Argument> argument{new Argument(data_type, reg_value, memory_value)};
                 arguments.push_back(std::move(argument));
             }
@@ -82,7 +71,6 @@ void Executor::execute_instruction() {
                 std::memcpy(data.data(), &value, sizeof(value));
             }
             if (argument.get()->data_type == Qword) {
-                //uint64_t value = (uint64_t) atoll(string_value.c_str());
                 uint64_t value = (uint64_t)strtoull(string_value.c_str(), nullptr, 10);
                 if (data.size() < sizeof(value))
                     data.resize(sizeof(value));
@@ -112,6 +100,14 @@ int Executor::find_instruction() {
     } while (!found);
     instruction = *instruction_iterator;
     return 0;
+}
+
+void Executor::process_register_argument(std::string raw_parameter) {
+
+}
+
+void Executor::process_memory_argument(std::string raw_parameter) {
+
 }
 
 void Executor::find_const_value() {

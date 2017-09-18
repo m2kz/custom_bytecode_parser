@@ -21,6 +21,7 @@ public:
 
     void read_header(std::vector<char> &buffer);
     uint32_t get_data_size();
+    int get_size_of_file();
 
 private:
     char magic[8];

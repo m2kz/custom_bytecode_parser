@@ -10,6 +10,8 @@
 #include <vector>
 
 struct VMRegister {
+    int64_t get_register_value();
+    void update_register_value(int64_t new_value);
     int64_t value;
 
     explicit VMRegister(int64_t value): value(value){}

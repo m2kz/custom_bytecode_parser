@@ -57,3 +57,7 @@ uint32_t EvmHeader::extract_uint_32_value(std::vector<char> &buffer) {
 uint32_t EvmHeader::get_data_size() {
     return data_size;
 }
+
+int EvmHeader::get_size_of_file() {
+    return sizeof(EvmHeader) + initial_data_size + code_size;
+}
