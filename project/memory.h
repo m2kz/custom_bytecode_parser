@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 
+
 enum DataType {
     Byte = 1,
     Word = 2,
@@ -35,6 +36,8 @@ public:
     uint64_t memory_to_int(std::vector<unsigned char> memory_slice);
 
     void int_to_memory(int64_t memory_int);
+
+    void update(uint64_t value, int offset, DataType data_type);
 
 private:
     unsigned long size;

@@ -3,6 +3,8 @@
 //
 
 #include <sstream>
+#include <cstring>
+#include <algorithm>
 #include "memory.h"
 
 void Memory::initialize() {
@@ -39,4 +41,35 @@ uint64_t Memory::memory_to_int(std::vector<unsigned char> memory_slice) {
     const char *const_argument = string_argument.c_str();
     uint64_t memory_value = (uint64_t)strtoull(const_argument, nullptr, 16);
     return memory_value;
+}
+
+void Memory::update(uint64_t value, int offset, DataType data_type) {
+    std::string string_value = std::to_string(value);
+    std::vector<unsigned char> data;
+    if (data_type == Byte) {
+        int8_t value = (int8_t) atoll(string_value.c_str());
+        if (data.size() < sizeof(value))
+            data.resize(sizeof(value));
+        std::memcpy(data.data(), &value, sizeof(value));
+    }
+    if (data_type == Word) {
+        int16_t value = (int16_t) atoll(string_value.c_str());
+        if (data.size() < sizeof(value))
+            data.resize(sizeof(value));
+        std::memcpy(data.data(), &value, sizeof(value));
+    }
+    if (data_type == Dword) {
+        int32_t value = (int32_t) atoll(string_value.c_str());
+        if (data.size() < sizeof(value))
+            data.resize(sizeof(value));
+        std::memcpy(data.data(), &value, sizeof(value));
+    }
+    if (data_type == Qword) {
+        uint64_t value = (uint64_t)strtoull(string_value.c_str(), nullptr, 10);
+        if (data.size() < sizeof(value))
+            data.resize(sizeof(value));
+        std::memcpy(data.data(), &value, sizeof(value));
+    }
+    std::reverse(data.begin(), data.end());
+    save_data(data, offset);
 }

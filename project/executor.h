@@ -9,6 +9,7 @@
 #include <string>
 #include "instruction.h"
 #include "memory.h"
+#include "argument.h"
 
 class Executor {
 
@@ -25,9 +26,9 @@ public:
 
     void find_const_value();
 
-    void process_register_argument(std::string raw_parameter);
+    std::shared_ptr<Argument> create_register_argument(std::string &raw_parameter);
 
-    void process_memory_argument(std::string raw_parameter);
+    std::shared_ptr<Argument> create_memory_argument(std::string &raw_parameter);
 
     int get_actual_bit();
 
