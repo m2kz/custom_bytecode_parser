@@ -10,7 +10,7 @@ const static int ORDER = 7;
 
 void Executor::execute_instruction() {
     int64_t constant_arg = 0;
-    int32_t label_arg = 0;
+    Label *label = nullptr;
     std::vector<std::shared_ptr<Argument>> arguments;
     find_instruction();
     auto params_number = instruction.param_list.length();
@@ -28,17 +28,29 @@ void Executor::execute_instruction() {
         }
         if (instruction.param_list[i] == 'C') {
             find_const_value();
-            int64_t int_val = (int64_t)std::stol(parameters[i], nullptr, 2);
-            constant_arg = int_val;
+            constant_arg = (int64_t) std::stol(parameters[i], nullptr, 2);
+        }
+        if (instruction.param_list[i] == 'L') {
+            find_label_address();
+            auto label_addr = (uint32_t) std::stol(parameters[i], nullptr, 2);
+            label = new Label(label_addr);
         }
     }
-    instruction.implementation(constant_arg, label_arg, arguments);
+    std::cout << "Instruction: " << instruction.name << " at: " << std::dec << actual_byte * 8 + actual_bit << std::endl;
+    instruction.implementation(constant_arg, *label, arguments);
     for (std::shared_ptr<Argument> &argument : arguments) {
         if (argument.get()->arg_type == RegisterType) {
             vm_registers[argument.get()->reg_id].get()->update_register_value(argument.get()->value);
         }
         if (argument.get()->arg_type == MemoryType) {
             memory.update(argument.get()->value, argument.get()->offset, argument.get()->data_type);
+        }
+    }
+    if (label != nullptr) {
+        bool if_jump = label->get_if_jump();
+        if (if_jump) {
+            std::cout << "Jump address: " << std::dec << label->get_jump_address() << std::endl;
+            set_actual_bit(label->get_jump_address());
         }
     }
 }
@@ -75,11 +87,21 @@ std::shared_ptr<Argument> Executor::create_memory_argument(std::string &raw_para
     std::string raw_reg_id = std::string(raw_parameter.begin() + 2, raw_parameter.begin() + 6);
     DataType data_type = (DataType) id_to_data_type(raw_data_type);
     int reg_id = reg_id_to_vector_id(raw_reg_id);
-    int64_t reg_value = vm_registers[reg_id].get()->value;
+    auto reg_value = (int64_t) vm_registers[reg_id].get()->value;
     std::vector<unsigned char> memory_argument = memory.access_data(reg_value, data_type);
     uint64_t memory_value = memory.memory_to_int(memory_argument);
     std::shared_ptr<Argument> argument{new Argument(data_type, reg_value, memory_value)};
     return argument;
+}
+
+void Executor::find_label_address() {
+    std::string label_address;
+    for (int i = 0; i < 32; i++) {
+        int bit = read_bit();
+        label_address.push_back((char) (bit + '0'));
+    }
+    std::reverse(label_address.begin(), label_address.end());
+    parameters.push_back(label_address);
 }
 
 void Executor::find_const_value() {
@@ -100,8 +122,7 @@ void Executor::find_argument() {
             bit = read_bit();
             register_index.push_back((char) (bit + '0'));
         }
-    }
-    if (bit == 1) {
+    } else if (bit == 1) {
         for (int i = 0; i < 6; i++) {
             bit = read_bit();
             register_index.push_back((char) (bit + '0'));

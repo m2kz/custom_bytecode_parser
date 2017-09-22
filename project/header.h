@@ -2,8 +2,8 @@
 // Created by michal on 09.09.17.
 //
 
-#ifndef PROJECT_EVM_FILE_HEADER_H
-#define PROJECT_EVM_FILE_HEADER_H
+#ifndef PROJECT_HEADER_H
+#define PROJECT_HEADER_H
 
 #include <cstdint>
 #include <vector>

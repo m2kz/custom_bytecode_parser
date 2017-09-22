@@ -10,6 +10,7 @@
 #include "instruction.h"
 #include "memory.h"
 #include "argument.h"
+#include "label.h"
 
 class Executor {
 
@@ -25,6 +26,8 @@ public:
     void find_argument();
 
     void find_const_value();
+
+    void find_label_address();
 
     std::shared_ptr<Argument> create_register_argument(std::string &raw_parameter);
 

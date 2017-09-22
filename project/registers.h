@@ -26,6 +26,14 @@ static int reg_id_to_vector_id(std::string &reg_id) {
     if (reg_id == "1010") return 5;
     if (reg_id == "0110") return 6;
     if (reg_id == "1110") return 7;
+    if (reg_id == "0001") return 8;
+    if (reg_id == "1001") return 9;
+    if (reg_id == "0101") return 10;
+    if (reg_id == "1101") return 11;
+    if (reg_id == "0011") return 12;
+    if (reg_id == "1011") return 13;
+    if (reg_id == "0111") return 14;
+    if (reg_id == "1111") return 15;
 };
 
 #endif //PROJECT_REGISTERS_H

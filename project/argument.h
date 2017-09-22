@@ -37,6 +37,7 @@ private:
 
 };
 
+
 class Argument : public ArgumentMemory, public ArgumentRegister {
 public:
     explicit Argument(int reg_id, uint64_t value) : ArgumentRegister(reg_id), value(value), arg_type(RegisterType) {}

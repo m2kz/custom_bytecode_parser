@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <stdio.h>
-#include "evm_file_header.h"
+#include "header.h"
 
 const char *magic_number = "ESET-VM2";
 
