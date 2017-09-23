@@ -18,6 +18,7 @@ struct Instruction {
     std::string opcode;
     std::string param_list;
     std::function<void(int64_t, Label &label, std::vector<std::shared_ptr<Argument>> argument)> implementation;
+    bool if_return = false;
 
     ~Instruction() {
         name = "";
@@ -96,13 +97,23 @@ static std::vector<Instruction> instructions{{"mov",          "000",    "RR",  [
                                                      label.set_if_jump(false);
                                              }
                                              },
-                                             {"consoleRead",    "10010",  "R", [](int64_t constant, Label &label,
+                                             {"consoleRead",  "10010",  "R",   [](int64_t constant, Label &label,
                                                                                   std::vector<std::shared_ptr<Argument>> argument) {
                                                  uint32_t value;
                                                  std::cout << "Give value" << std::endl;
                                                  std::cin >> value;
                                                  argument[0].get()->value = value;
                                              }
+                                             },
+                                             {"call",         "1100",   "L",   [](int64_t constant, Label &label,
+                                                                                  std::vector<std::shared_ptr<Argument>> argument) {
+                                                 label.set_if_function(true);
+                                             }
+                                             },
+                                             {"ret",          "1101",   "",    [](int64_t constant, Label &label,
+                                                                                  std::vector<std::shared_ptr<Argument>> argument) {
+
+                                             }, true
                                              }
 
 };

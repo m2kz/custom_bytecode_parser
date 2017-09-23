@@ -5,10 +5,13 @@
 #include <memory>
 #include <cstring>
 #include "executor.h"
+#include "function.h"
+
+std::vector<std::shared_ptr<Function>> functions;
 
 const static int ORDER = 7;
 
-void Executor::execute_instruction() {
+void Executor::process_instruction() {
     int64_t constant_arg = 0;
     Label *label = nullptr;
     std::vector<std::shared_ptr<Argument>> arguments;
@@ -33,11 +36,11 @@ void Executor::execute_instruction() {
         if (instruction.param_list[i] == 'L') {
             find_label_address();
             auto label_addr = (uint32_t) std::stol(parameters[i], nullptr, 2);
-            label = new Label(label_addr);
+            label = new Label(label_addr, get_actual_bit());
         }
     }
     std::cout << "Instruction: " << instruction.name << " at: " << std::dec << actual_byte * 8 + actual_bit << std::endl;
-    instruction.implementation(constant_arg, *label, arguments);
+    execution(constant_arg, *label, arguments);
     for (std::shared_ptr<Argument> &argument : arguments) {
         if (argument.get()->arg_type == RegisterType) {
             vm_registers[argument.get()->reg_id].get()->update_register_value(argument.get()->value);
@@ -51,8 +54,27 @@ void Executor::execute_instruction() {
         if (if_jump) {
             std::cout << "Jump address: " << std::dec << label->get_jump_address() << std::endl;
             set_actual_bit(label->get_jump_address());
+
         }
+        bool if_function = label->get_if_function();
+        if (if_function) {
+            std::shared_ptr<Function> function{new Function(*this, label->get_jump_address(), label->get_call_address())};
+            functions.push_back(function);
+            function->set_executed_bit(label->get_jump_address());
+            do {
+                function->process_function();
+            } while (!function->check_program_end());
+        }
+        delete label;
     }
+    if(instruction.if_return) {
+        functions.back()->set_function_end(true);
+    }
+
+}
+
+void Executor::execution(int64_t constant_arg, Label &label, std::vector<std::shared_ptr<Argument>> arguments) {
+    instruction.implementation(constant_arg, label, arguments);
 }
 
 int Executor::find_instruction() {

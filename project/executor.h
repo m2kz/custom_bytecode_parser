@@ -21,7 +21,9 @@ public:
 
     int find_instruction();
 
-    void execute_instruction();
+    void process_instruction();
+
+    void execution(int64_t, Label &label, std::vector<std::shared_ptr<Argument>>);
 
     void find_argument();
 

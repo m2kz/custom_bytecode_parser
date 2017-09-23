@@ -25,13 +25,13 @@ int main(int argc, char *argv[]) {
     Memory memory(header.get_data_size());
     memory.initialize();
     Executor executor(buffer, vm_registers, memory);
-    Runner runner(executor, header.get_size_of_file());
+    Function main_function(executor, header.get_size_of_file());
 
     const int executed_bit = 8 * header_length_in_bytes;
-    runner.set_executed_bit(executed_bit);
+    main_function.set_executed_bit(executed_bit);
     do {
-        runner.process_instruction();
-    } while (!runner.check_program_end());
+        main_function.process_function();
+    } while (!main_function.check_program_end());
 
     return 0;
 }

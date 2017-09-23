@@ -45,7 +45,7 @@ public:
     explicit Argument(DataType data_type, int offset, uint64_t value) : ArgumentMemory(data_type, offset),
                                                                             value(value), arg_type(MemoryType) {}
 
-    uint64_t value;
+    int64_t value;
     ArgType arg_type;
 
 private:
