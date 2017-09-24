@@ -11,14 +11,14 @@
 
 const char *magic_number = "ESET-VM2";
 
-EvmHeader::EvmHeader() {
+Header::Header() {
     magic[0] = '\0';
     code_size = 0;
     data_size = 0;
     initial_data_size = 0;
 }
 
-void EvmHeader::read_header(std::vector<char> &buffer) {
+void Header::read_header(std::vector<char> &buffer) {
 
     std::vector<char> header(buffer.begin(), buffer.begin() + header_length_in_bytes);
 
@@ -41,7 +41,7 @@ void EvmHeader::read_header(std::vector<char> &buffer) {
     initial_data_size = extract_uint_32_value(header_initial_data_size);
 }
 
-void EvmHeader::verify(std::vector<char> &buffer) {
+void Header::verify(std::vector<char> &buffer) {
     char *buffer_char = buffer.data();
     buffer_char[8] = '\0';
     if (strcmp(buffer_char, magic_number) != 0) {
@@ -50,7 +50,7 @@ void EvmHeader::verify(std::vector<char> &buffer) {
     }
 }
 
-uint32_t EvmHeader::extract_uint_32_value(std::vector<char> &buffer) {
+uint32_t Header::extract_uint_32_value(std::vector<char> &buffer) {
     char *buffer_char = buffer.data();
     buffer_char[4] = '\0';
     uint32_t int_value;
@@ -58,10 +58,14 @@ uint32_t EvmHeader::extract_uint_32_value(std::vector<char> &buffer) {
     return int_value;
 }
 
-uint32_t EvmHeader::get_data_size() {
+uint32_t Header::get_data_size() {
     return data_size;
 }
 
-int EvmHeader::get_size_of_file() {
-    return sizeof(EvmHeader) + initial_data_size + code_size;
+int Header::get_size_of_file() {
+    return sizeof(Header) + initial_data_size + code_size;
+}
+
+uint32_t Header::get_initial_data_size() {
+    return initial_data_size;
 }

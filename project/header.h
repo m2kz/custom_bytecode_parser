@@ -14,14 +14,15 @@ const int header_param_length = 4;
 const int header_length_in_bytes = magic_number_length + header_param_number * header_param_length;
 
 
-class EvmHeader {
+class Header {
 
 public:
-    EvmHeader();
+    Header();
 
     void read_header(std::vector<char> &buffer);
     uint32_t get_data_size();
     int get_size_of_file();
+    uint32_t get_initial_data_size();
 
 private:
     char magic[8];

@@ -20,10 +20,10 @@ int main(int argc, char *argv[]) {
 
     std::vector<char> buffer;
     read_file_to_buffer(emv_file_path, buffer);
-    EvmHeader header;
+    Header header;
     header.read_header(buffer);
-    Memory memory(header.get_data_size());
-    memory.initialize();
+    Memory memory(header.get_data_size(), header.get_initial_data_size());
+    memory.initialize(buffer);
     Executor executor(buffer, vm_registers, memory);
     Function main_function(executor, header.get_size_of_file());
 
