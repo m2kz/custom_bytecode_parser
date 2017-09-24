@@ -31,7 +31,7 @@ void Executor::process_instruction() {
         }
         if (instruction.param_list[i] == 'C') {
             find_const_value();
-            constant_arg = (int64_t) std::stol(parameters[i], nullptr, 2);
+            constant_arg = (int64_t) std::stoull(parameters[i], nullptr, 2);
         }
         if (instruction.param_list[i] == 'L') {
             find_label_address();
@@ -58,16 +58,22 @@ void Executor::process_instruction() {
         }
         bool if_function = label->get_if_function();
         if (if_function) {
-            std::shared_ptr<Function> function{new Function(*this, label->get_jump_address(), label->get_call_address())};
+            std::shared_ptr<Function> function{
+                    new Function(*this, label->get_jump_address(), label->get_call_address())};
             functions.push_back(function);
             function->set_executed_bit(label->get_jump_address());
             do {
                 function->process_function();
-            } while (!function->check_program_end());
+            } while (!function->check_function_end());
+            std::cout << "Internal function end" << std::endl;
+            set_actual_bit(label->get_call_address());
+            functions.pop_back();
+            instruction.if_return = false;
         }
         delete label;
     }
     if(instruction.if_return) {
+        std::cout << "External function end" << std::endl;
         functions.back()->set_function_end(true);
     }
 

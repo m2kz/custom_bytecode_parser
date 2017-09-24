@@ -40,9 +40,9 @@ private:
 
 class Argument : public ArgumentMemory, public ArgumentRegister {
 public:
-    explicit Argument(int reg_id, uint64_t value) : ArgumentRegister(reg_id), value(value), arg_type(RegisterType) {}
+    explicit Argument(int reg_id, int64_t value) : ArgumentRegister(reg_id), value(value), arg_type(RegisterType) {}
 
-    explicit Argument(DataType data_type, int offset, uint64_t value) : ArgumentMemory(data_type, offset),
+    explicit Argument(DataType data_type, int offset, int64_t value) : ArgumentMemory(data_type, offset),
                                                                             value(value), arg_type(MemoryType) {}
 
     int64_t value;
