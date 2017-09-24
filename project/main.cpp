@@ -18,13 +18,21 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+
+
     std::vector<char> buffer;
     read_file_to_buffer(emv_file_path, buffer);
     Header header;
     header.read_header(buffer);
     Memory memory(header.get_data_size(), header.get_initial_data_size());
     memory.initialize(buffer);
-    Executor executor(buffer, vm_registers, memory);
+    Executor *executor;
+    if (argc > 2) {
+
+    } else {
+        executor = new Executor(buffer, vm_registers, memory);
+    }
+//    Executor executor(buffer, vm_registers, memory);
     Function main_function(executor, header.get_size_of_file());
 
     const int executed_bit = 8 * header_length_in_bytes;
