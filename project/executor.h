@@ -7,8 +7,8 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 #include "instruction.h"
-#include "memory.h"
 #include "argument.h"
 #include "label.h"
 
@@ -18,6 +18,10 @@ public:
     explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> &vm_registers, Memory &memory)
             : buffer_ref(buffer),
               vm_registers(vm_registers), memory(memory) {}
+
+    explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> &vm_registers, Memory &memory, std::vector<char> &input_file)
+            : buffer_ref(buffer),
+              vm_registers(vm_registers), memory(memory), input_file(input_file) {}
 
     int find_instruction();
 
@@ -50,6 +54,7 @@ private:
     std::vector<char> &buffer_ref;
     std::vector<std::shared_ptr<VMRegister>> &vm_registers;
     Memory &memory;
+    std::vector<char> input_file;
 
     int read_bit();
 };

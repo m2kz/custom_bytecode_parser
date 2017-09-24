@@ -29,9 +29,11 @@ public:
 
     void initialize(std::vector<char> &buffer);
 
-    void save_data(std::vector<unsigned char>, int offset);
+    void save_data(std::vector<unsigned char>, uint64_t offset);
 
     std::vector<unsigned char> access_data(int offset, DataType data_type);
+
+    int check_data_avaibility(int offset, DataType data_type);
 
     uint64_t memory_to_int(std::vector<unsigned char> memory_slice);
 

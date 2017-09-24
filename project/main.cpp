@@ -1,3 +1,4 @@
+#include <fstream>
 #include "main.h"
 
 int main(int argc, char *argv[]) {
@@ -18,23 +19,24 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-
-
     std::vector<char> buffer;
     read_file_to_buffer(emv_file_path, buffer);
     Header header;
     header.read_header(buffer);
     Memory memory(header.get_data_size(), header.get_initial_data_size());
     memory.initialize(buffer);
+    std::vector<char> input_file_buffer;
     Executor *executor;
     if (argc > 2) {
-
+        std::string input_file_param(argv[2]);
+        read_file_to_buffer(input_file_param, input_file_buffer);
+        executor = new Executor(buffer, vm_registers, memory, input_file_buffer);
     } else {
         executor = new Executor(buffer, vm_registers, memory);
     }
-//    Executor executor(buffer, vm_registers, memory);
-    Function main_function(executor, header.get_size_of_file());
-
+    set_instruction_memory(memory);
+    set_instruction_input_file(input_file_buffer);
+    Function main_function(*executor, header.get_size_of_file());
     const int executed_bit = 8 * header_length_in_bytes;
     main_function.set_executed_bit(executed_bit);
     do {

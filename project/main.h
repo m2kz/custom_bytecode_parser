@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include "instruction.h"
 #include "commons.h"
 #include "header.h"
 #include "executor.h"

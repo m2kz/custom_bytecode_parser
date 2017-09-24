@@ -10,15 +10,15 @@
 void Memory::initialize(std::vector<char> &buffer) {
     stored_data.resize(size);
     if (init_data_size > 0) {
-        std::vector<char> temp_stored_data(buffer.end() - init_data_size, buffer.end());
+        std::vector<unsigned char> temp_stored_data(buffer.end() - init_data_size, buffer.end());
         for (auto i = 0; i < init_data_size; i++) {
             stored_data[i] = temp_stored_data[i];
         }
     }
 }
 
-void Memory::save_data(std::vector<unsigned char> data, int offset) {
-    for (int i = size, y = data.size(); y != 0; i--, y--) {
+void Memory::save_data(std::vector<unsigned char> data, uint64_t offset) {
+    for (unsigned long i = size, y = data.size(); y != 0; i--, y--) {
         stored_data[i - 1 - offset] = data[y - 1];
     }
 }
@@ -30,6 +30,14 @@ std::vector<unsigned char> Memory::access_data(int offset, DataType data_type) {
         accessed_data.push_back(value);
     }
     return accessed_data;
+}
+
+int Memory::check_data_avaibility(int offset, DataType data_type) {
+    if ((offset + (int) data_type) <= size) {
+        return 0;
+    } else {
+        return (int)size - offset - (int) data_type;
+    }
 }
 
 uint64_t Memory::memory_to_int(std::vector<unsigned char> memory_slice) {
