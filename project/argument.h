@@ -16,7 +16,7 @@ enum ArgType {
 
 class ArgumentRegister {
 public:
-    ArgumentRegister() {}
+    ArgumentRegister() = default;
 
     explicit ArgumentRegister(int reg_id) : reg_id(reg_id) {}
 
@@ -27,7 +27,7 @@ private:
 
 class ArgumentMemory {
 public:
-    ArgumentMemory() {}
+    ArgumentMemory() = default;
 
     explicit ArgumentMemory(DataType data_type, int offset) : data_type(data_type), offset(offset) {}
 
@@ -40,10 +40,10 @@ private:
 
 class Argument : public ArgumentMemory, public ArgumentRegister {
 public:
-    explicit Argument(int reg_id, int64_t value) : ArgumentRegister(reg_id), value(value), arg_type(RegisterType) {}
+    explicit Argument(int reg_id, int64_t value) : ArgumentRegister(reg_id), value(value), arg_type(RegisterType), ArgumentMemory() {}
 
     explicit Argument(DataType data_type, int offset, int64_t value) : ArgumentMemory(data_type, offset),
-                                                                            value(value), arg_type(MemoryType) {}
+                                                                            value(value), arg_type(MemoryType), ArgumentRegister() {}
 
     int64_t value;
     ArgType arg_type;

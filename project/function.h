@@ -18,8 +18,6 @@ public:
 
     void set_executed_bit(int executed_bit);
 
-    int get_executed_bit();
-
     void process_function();
 
     bool check_program_end();
@@ -30,11 +28,11 @@ public:
 
 private:
 
-    int executed_bit;
+    int executed_bit{};
     Executor &executor;
-    int code_length;
-    uint32_t call_address;
-    uint32_t return_address;
+    int code_length{};
+    uint32_t call_address{};
+    uint32_t return_address{};
     bool function_end = false;
 
 };

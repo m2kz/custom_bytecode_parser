@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <memory>
 #include <cstring>
+#include <utility>
 #include "executor.h"
 #include "function.h"
 
@@ -39,19 +40,27 @@ void Executor::process_instruction() {
             label = new Label(label_addr, get_actual_bit());
         }
     }
-    std::cout << "Instruction: " << instruction.name << " at: " << std::dec << actual_byte * 8 + actual_bit << std::endl;
+    if (functions.size() == 0)
+    std::cout << "Instruction: " << instruction.name << " at: " << std::dec << actual_byte * 8 + actual_bit
+              << std::endl;
     execution(constant_arg, *label, arguments);
     for (std::shared_ptr<Argument> &argument : arguments) {
         if (argument.get()->arg_type == RegisterType) {
+            if (functions.size() == 0)
+                std::cout << "Reg ID: " << argument.get()->reg_id << " value: " << argument.get()->value << std::endl;
             vm_registers[argument.get()->reg_id].get()->update_register_value(argument.get()->value);
         }
         if (argument.get()->arg_type == MemoryType) {
-            memory.update(argument.get()->value, argument.get()->offset, argument.get()->data_type);
+            if (functions.size() == 0)
+                std::cout << "Memory offset: " << argument.get()->offset << " data type: " << argument.get()->data_type
+                          << " value: " << argument.get()->value << std::endl;
+            memory.update(argument.get()->value, (uint64_t) argument.get()->offset, argument.get()->data_type);
         }
     }
     if (label != nullptr) {
         bool if_jump = label->get_if_jump();
         if (if_jump) {
+            if (functions.size() == 0)
             std::cout << "Jump address: " << std::dec << label->get_jump_address() << std::endl;
             set_actual_bit(label->get_jump_address());
 
@@ -65,22 +74,20 @@ void Executor::process_instruction() {
             do {
                 function->process_function();
             } while (!function->check_function_end());
-            std::cout << "Internal function end" << std::endl;
             set_actual_bit(label->get_call_address());
             functions.pop_back();
             instruction.if_return = false;
         }
         delete label;
     }
-    if(instruction.if_return) {
-        std::cout << "External function end" << std::endl;
+    if (instruction.if_return) {
         functions.back()->set_function_end(true);
     }
 
 }
 
 void Executor::execution(int64_t constant_arg, Label &label, std::vector<std::shared_ptr<Argument>> arguments) {
-    instruction.implementation(constant_arg, label, arguments);
+    instruction.implementation(constant_arg, label, std::move(arguments));
 }
 
 int Executor::find_instruction() {
@@ -117,7 +124,7 @@ std::shared_ptr<Argument> Executor::create_memory_argument(std::string &raw_para
     int reg_id = reg_id_to_vector_id(raw_reg_id);
     auto reg_value = (int64_t) vm_registers[reg_id].get()->value;
     std::vector<unsigned char> memory_argument = memory.access_data(reg_value, data_type);
-    uint64_t memory_value = memory.memory_to_int(memory_argument);
+    int64_t memory_value = memory.memory_to_int(memory_argument);
     std::shared_ptr<Argument> argument{new Argument(data_type, reg_value, memory_value)};
     return argument;
 }

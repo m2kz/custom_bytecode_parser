@@ -19,7 +19,8 @@ public:
             : buffer_ref(buffer),
               vm_registers(vm_registers), memory(memory) {}
 
-    explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> &vm_registers, Memory &memory, std::vector<char> &input_file)
+    explicit Executor(std::vector<char> &buffer, std::vector<std::shared_ptr<VMRegister>> &vm_registers, Memory &memory,
+                      std::vector<char> &input_file)
             : buffer_ref(buffer),
               vm_registers(vm_registers), memory(memory), input_file(input_file) {}
 

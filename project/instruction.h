@@ -75,7 +75,7 @@ static std::vector<Instruction> instructions{{"mov",          "000",    "RR",   
                                                      argument[2].get()->value = 0;
                                              }},
                                              {"hlt",          "10110",  "",     [](int64_t constant, Label &,
-                                                                                   std::vector<std::shared_ptr<Argument>> argument) {
+                                                                                   const std::vector<std::shared_ptr<Argument>> &argument) {
 
                                                  exit(1);
 
@@ -93,7 +93,7 @@ static std::vector<Instruction> instructions{{"mov",          "000",    "RR",   
                                              }
                                              },
                                              {"jump",         "01101",  "L",    [](int64_t constant, Label &label,
-                                                                                   std::vector<std::shared_ptr<Argument>> argument) {
+                                                                                   const std::vector<std::shared_ptr<Argument>> &argument) {
                                                  label.set_if_jump(true);
                                              }
                                              },
@@ -114,12 +114,12 @@ static std::vector<Instruction> instructions{{"mov",          "000",    "RR",   
                                              }
                                              },
                                              {"call",         "1100",   "L",    [](int64_t constant, Label &label,
-                                                                                   std::vector<std::shared_ptr<Argument>> argument) {
+                                                                                   const std::vector<std::shared_ptr<Argument>> &argument) {
                                                  label.set_if_function(true);
                                              }
                                              },
                                              {"ret",          "1101",   "",     [](int64_t constant, Label &label,
-                                                                                   std::vector<std::shared_ptr<Argument>> argument) {
+                                                                                   const std::vector<std::shared_ptr<Argument>> &argument) {
 
                                              }, true
                                              },

@@ -21,14 +21,10 @@ bool Label::get_if_function() {
     return if_function;
 }
 
-int32_t Label::get_jump_address() {
+uint32_t Label::get_jump_address() {
     return 8 * header_length_in_bytes + jump_address;
 }
 
-void Label::set_jump_address(uint32_t new_jump_address) {
-    jump_address = new_jump_address;
-}
-
-uint32_t Label::get_call_address() {
+int Label::get_call_address() {
     return call_address;
 }

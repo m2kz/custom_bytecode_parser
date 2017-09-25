@@ -16,7 +16,7 @@ enum DataType {
     Qword = 8
 };
 
-static int id_to_data_type(std::string reg_id) {
+static int id_to_data_type(std::string &reg_id) {
     if (reg_id == "00") return Byte;
     if (reg_id == "10") return Word;
     if (reg_id == "01") return Dword;
@@ -29,15 +29,13 @@ public:
 
     void initialize(std::vector<char> &buffer);
 
-    void save_data(std::vector<unsigned char>, uint64_t offset);
+    void save_data(std::vector<unsigned char>, int64_t offset);
 
     std::vector<unsigned char> access_data(int offset, DataType data_type);
 
-    int check_data_avaibility(int offset, DataType data_type);
+    int64_t memory_to_int(std::vector<unsigned char> memory_slice);
 
-    uint64_t memory_to_int(std::vector<unsigned char> memory_slice);
-
-    void update(uint64_t value, int offset, DataType data_type);
+    void update(int64_t value, uint64_t offset, DataType data_type);
 
 private:
     unsigned long size;

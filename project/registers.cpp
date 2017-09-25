@@ -4,10 +4,6 @@
 
 #include "registers.h"
 
-int64_t VMRegister::get_register_value() {
-    return value;
-}
-
-void VMRegister::update_register_value(uint64_t new_value) {
+void VMRegister::update_register_value(int64_t new_value) {
     value = new_value;
 }

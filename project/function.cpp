@@ -8,10 +8,6 @@ void Function::set_executed_bit(int new_executed_bit) {
     executed_bit = new_executed_bit;
 }
 
-int Function::get_executed_bit() {
-    return executed_bit;
-}
-
 void Function::process_function() {
     executor.reset();
     executor.set_actual_bit(executed_bit);
@@ -20,11 +16,7 @@ void Function::process_function() {
 }
 
 bool Function::check_program_end() {
-    if (code_length == (executed_bit/8)) {
-        return true;
-    } else {
-        return false;
-    }
+    return code_length == (executed_bit / 8);
 }
 
 void Function::set_function_end(bool value) {

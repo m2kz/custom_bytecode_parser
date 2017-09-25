@@ -5,17 +5,12 @@
 #include <sys/stat.h>
 #include <fstream>
 #include <vector>
-#include <string>
 #include <iostream>
 
 int is_file(std::string &file_path) {
-    struct stat sb;
+    struct stat sb{};
 
-    if (stat(file_path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode)) {
-        return true;
-    } else {
-        return false;
-    }
+    return stat(file_path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode);
 }
 
 int read_file_to_buffer(std::string &file_path, std::vector<char> &buffer) {
@@ -24,7 +19,7 @@ int read_file_to_buffer(std::string &file_path, std::vector<char> &buffer) {
     file.seekg(0, std::ios::end);
     long file_size = file.tellg();
     file.seekg(0, std::ios::beg);
-    buffer.resize(file_size);
+    buffer.resize((unsigned long)file_size);
     file.read(&(buffer[0]), file_size);
     file.close();
 }
