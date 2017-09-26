@@ -4,11 +4,13 @@
 #include <algorithm>
 #include <memory>
 #include <cstring>
-#include <utility>
+#include <thread>
 #include "executor.h"
 #include "function.h"
+#include "thread_info.h"
 
 std::vector<std::shared_ptr<Function>> functions;
+std::vector<std::pair<std::thread, ThreadInfo>> threads;
 
 const static int ORDER = 7;
 
@@ -40,18 +42,18 @@ void Executor::process_instruction() {
             label = new Label(label_addr, get_actual_bit());
         }
     }
-    if (functions.size() == 0)
-    std::cout << "Instruction: " << instruction.name << " at: " << std::dec << actual_byte * 8 + actual_bit
-              << std::endl;
+    if (functions.empty())
+        std::cout << "Instruction: " << instruction.name << " at: " << std::dec << actual_byte * 8 + actual_bit
+                  << std::endl;
     execution(constant_arg, *label, arguments);
     for (std::shared_ptr<Argument> &argument : arguments) {
         if (argument.get()->arg_type == RegisterType) {
-            if (functions.size() == 0)
+            if (functions.empty())
                 std::cout << "Reg ID: " << argument.get()->reg_id << " value: " << argument.get()->value << std::endl;
             vm_registers[argument.get()->reg_id].get()->update_register_value(argument.get()->value);
         }
         if (argument.get()->arg_type == MemoryType) {
-            if (functions.size() == 0)
+            if (functions.empty())
                 std::cout << "Memory offset: " << argument.get()->offset << " data type: " << argument.get()->data_type
                           << " value: " << argument.get()->value << std::endl;
             memory.update(argument.get()->value, (uint64_t) argument.get()->offset, argument.get()->data_type);
@@ -60,15 +62,15 @@ void Executor::process_instruction() {
     if (label != nullptr) {
         bool if_jump = label->get_if_jump();
         if (if_jump) {
-            if (functions.size() == 0)
-            std::cout << "Jump address: " << std::dec << label->get_jump_address() << std::endl;
+            if (functions.empty())
+                std::cout << "Jump address: " << std::dec << label->get_jump_address() << std::endl;
             set_actual_bit(label->get_jump_address());
 
         }
         bool if_function = label->get_if_function();
         if (if_function) {
             std::shared_ptr<Function> function{
-                    new Function(*this, label->get_jump_address(), label->get_call_address())};
+                    new Function(*this, label->get_jump_address(), static_cast<uint32_t>(label->get_call_address()))};
             functions.push_back(function);
             function->set_executed_bit(label->get_jump_address());
             do {
@@ -78,12 +80,38 @@ void Executor::process_instruction() {
             functions.pop_back();
             instruction.if_return = false;
         }
+        bool if_thread = label->get_if_thread();
+        if (if_thread) {
+            Executor subexecutor(this->buffer_ref, this->vm_registers, this->memory);
+            subexecutor.set_actual_bit(label->get_jump_address());
+            ThreadInfo thread_info(subexecutor, static_cast<uint32_t>(label->get_jump_address()));
+            thread_info.set_executed_bit(label->get_jump_address());
+            std::thread subprocess(std::ref(thread_info));
+            thread_info.set_thread_id(subprocess.get_id());
+            std::pair<std::thread, ThreadInfo> thread_subprocess_map(std::move(subprocess), thread_info);
+            threads.push_back(std::move(thread_subprocess_map));
+            vm_registers[label->get_thread_id_reg()].get()->value = static_cast<int64_t>(hasher(subprocess.get_id()));
+            threads_number++;
+        }
         delete label;
     }
     if (instruction.if_return) {
         functions.back()->set_function_end(true);
     }
+    if (instruction.if_join) {
+//        int64_t hash_thread_id = vm_registers[arguments.back()->reg_id]->value;
+//        for (std::pair<std::thread, ThreadInfo> &thread : threads) {
+//            ThreadInfo thread_info = std::get<1>(thread);
+//            if (hasher(thread_info.get_thread_id()) == hash_thread_id) {
+//                std::thread join_thread = std::move(std::get<0>(thread));
+                while(1) {
 
+                }
+//                join_thread.join();
+//            }
+//        }
+
+   }
 }
 
 void Executor::execution(int64_t constant_arg, Label &label, std::vector<std::shared_ptr<Argument>> arguments) {

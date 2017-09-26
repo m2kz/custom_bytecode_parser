@@ -9,10 +9,13 @@
 #include <iostream>
 #include <memory>
 #include <iomanip>
+#include <thread>
+#include <pthread.h>
 #include "memory.h"
 #include "registers.h"
 #include "argument.h"
 #include "label.h"
+
 
 void set_instruction_memory(Memory &memory);
 
@@ -20,6 +23,7 @@ void set_instruction_input_file(std::vector<char> &input_file);
 
 extern Memory *instruction_memory;
 extern std::vector<char> *instruction_input_file;
+extern int threads_number;
 
 struct Instruction {
     std::string name;
@@ -27,6 +31,7 @@ struct Instruction {
     std::string param_list;
     std::function<void(int64_t, Label &label, std::vector<std::shared_ptr<Argument>> argument)> implementation;
     bool if_return = false;
+    bool if_join = false;
 
     ~Instruction() {
         name = "";
@@ -76,10 +81,12 @@ static std::vector<Instruction> instructions{{"mov",          "000",    "RR",   
                                              }},
                                              {"hlt",          "10110",  "",     [](int64_t constant, Label &,
                                                                                    const std::vector<std::shared_ptr<Argument>> &argument) {
+                                                 if (threads_number == 0)
+                                                     exit(1);
+                                                 else
+                                                     pthread_exit(nullptr);
 
-                                                 exit(1);
-
-                                             },
+                                             }
                                              },
                                              {"loadConst",    "001",    "CR",   [](int64_t constant, Label &,
                                                                                    std::vector<std::shared_ptr<Argument>> argument) {
@@ -138,7 +145,16 @@ static std::vector<Instruction> instructions{{"mov",          "000",    "RR",   
                                                              instruction_input_file->size() - argument[0].get()->value;
                                              }
                                              },
+                                             {"createThread", "10100",  "LR",   [](int64_t constant, Label &label,
+                                                                                   const std::vector<std::shared_ptr<Argument>> &argument) {
+                                                 label.set_if_thread(true);
+                                             }
+                                             },
+                                             {"joinThread", "10101",  "R",   [](int64_t constant, Label &label,
+                                                                                   const std::vector<std::shared_ptr<Argument>> &argument) {
 
+                                             }, false, true
+                                             }
 };
 
 #endif //PROJECT_OPCODES_H

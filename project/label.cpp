@@ -13,6 +13,10 @@ void Label::set_if_function(bool value) {
     if_function = value;
 }
 
+void Label::set_if_thread(bool value) {
+    if_thread = value;
+}
+
 bool Label::get_if_jump() {
     return if_jump;
 }
@@ -25,6 +29,14 @@ uint32_t Label::get_jump_address() {
     return 8 * header_length_in_bytes + jump_address;
 }
 
+int Label::get_thread_id_reg() {
+    return thread_id_reg;
+}
+
 int Label::get_call_address() {
     return call_address;
+}
+
+bool Label::get_if_thread() {
+    return if_thread;
 }

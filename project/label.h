@@ -15,6 +15,8 @@ public:
 
     void set_if_function(bool value);
 
+    void set_if_thread(bool value);
+
     bool get_if_jump();
 
     bool get_if_function();
@@ -23,11 +25,19 @@ public:
 
     int get_call_address();
 
+    void set_thread_id_reg();
+
+    int get_thread_id_reg();
+
+    bool get_if_thread();
+
 private:
     bool if_jump = false;
     bool if_function = false;
+    bool if_thread = false;
     uint32_t jump_address = 0;
     int call_address = 0;
+    int thread_id_reg = 0;
 };
 
 #endif //PROJECT_LABEL_H
