@@ -101,7 +101,10 @@ void Executor::process_instruction() {
         int64_t hash_thread_id = vm_registers[arguments.back()->reg_id]->value;
         for (std::thread &thread : threads) {
             if (hasher(threads.back().get_id()) == hash_thread_id) {
-                threads.back().join();
+//                threads.back().join();
+                while(1) {
+
+                }
             }
         }
     }

@@ -11,9 +11,13 @@
 
 struct VMRegister {
     void update_register_value(int64_t new_value);
+
     int64_t value;
 
-    explicit VMRegister(uint64_t value): value(value){}
+    explicit VMRegister(uint64_t value) : value(value) {}
+
+private:
+
 };
 
 static int reg_id_to_vector_id(std::string &reg_id) {

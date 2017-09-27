@@ -15,10 +15,12 @@ void ThreadInfo::operator()() {
 }
 
 void ThreadInfo::process_function() {
+    std::cout << "Enter thread " << threads_number << std::endl;
     executor.reset();
     executor.set_actual_bit(executed_bit);
     executor.process_instruction();
     set_executed_bit(executor.get_actual_bit());
+    std::cout << "Exit thread " << threads_number << std::endl;
 }
 
 void ThreadInfo::execution() {

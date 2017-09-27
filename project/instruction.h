@@ -10,6 +10,8 @@
 #include <memory>
 #include <iomanip>
 #include <thread>
+#include <mutex>
+#include <deque>
 #include <pthread.h>
 #include "memory.h"
 #include "registers.h"
@@ -23,6 +25,7 @@ void set_instruction_input_file(std::vector<char> &input_file);
 
 extern Memory *instruction_memory;
 extern std::vector<char> *instruction_input_file;
+extern std::deque<std::pair<int, std::unique_ptr<std::mutex>>> keychain;
 extern int threads_number;
 
 struct Instruction {
@@ -150,10 +153,35 @@ static std::vector<Instruction> instructions{{"mov",          "000",    "RR",   
                                                  label.set_if_thread(true);
                                              }
                                              },
-                                             {"joinThread", "10101",  "R",   [](int64_t constant, Label &label,
+                                             {"joinThread",   "10101",  "R",    [](int64_t constant, Label &label,
                                                                                    const std::vector<std::shared_ptr<Argument>> &argument) {
 
                                              }, false, true
+                                             },
+                                             {"lock",         "1110",   "R",    [](int64_t constant, Label &label,
+                                                                                   const std::vector<std::shared_ptr<Argument>> &argument) {
+                                                 for (std::pair<int, std::unique_ptr<std::mutex>> &unique_mutex : keychain) {
+                                                     if (unique_mutex.first == argument[0].get()->value) {
+                                                         unique_mutex.second->lock();
+                                                     } else {
+                                                         auto iter = keychain.end();
+                                                         keychain.emplace(iter,
+                                                                          std::make_pair(
+                                                                                  argument[0].get()->value,
+                                                                                  std::make_unique<std::mutex>()));
+                                                         keychain.end()->second->lock();
+                                                     }
+                                                 }
+                                             }
+                                             },
+                                             {"unlock",       "1111",   "R",    [](int64_t constant, Label &label,
+                                                                                   const std::vector<std::shared_ptr<Argument>> &argument) {
+                                                 for (std::pair<int, std::unique_ptr<std::mutex>> &unique_mutex : keychain) {
+                                                     if (unique_mutex.first == argument[0].get()->value) {
+                                                         unique_mutex.second->unlock();
+                                                     }
+                                                 }
+                                             }
                                              }
 };
 

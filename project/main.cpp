@@ -41,7 +41,9 @@ int main(int argc, char *argv[]) {
     const int executed_bit = 8 * header_length_in_bytes;
     main_function.set_executed_bit(executed_bit);
     do {
+        std::cout << "Enter main thread" << std::endl;
         main_function.process_function();
+        std::cout << "Exit main thread" << std::endl;
     } while (!main_function.check_program_end());
 
     return 0;
