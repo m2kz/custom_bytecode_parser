@@ -10,6 +10,10 @@ void ThreadInfo::set_executed_bit(int new_executed_bit) {
     executed_bit = new_executed_bit;
 }
 
+void ThreadInfo::operator()() {
+    execution();
+}
+
 void ThreadInfo::process_function() {
     executor.reset();
     executor.set_actual_bit(executed_bit);

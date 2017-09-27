@@ -13,7 +13,9 @@ static std::hash<std::thread::id> hasher;
 class ThreadInfo {
 public:
 
-    explicit ThreadInfo(Executor &executor, uint32_t call_address) : executor(executor), call_address(call_address) {}
+    explicit ThreadInfo(Executor executor, uint32_t call_address) : executor(executor), call_address(call_address) {}
+
+    void operator()();
 
     void set_executed_bit(int executed_bit);
 
@@ -30,7 +32,7 @@ public:
 private:
 
     int executed_bit = 0;
-    Executor &executor;
+    Executor executor;
     uint32_t call_address;
     bool thread_end = false;
     std::thread::id thread_id;

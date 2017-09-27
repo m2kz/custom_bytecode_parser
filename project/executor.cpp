@@ -10,7 +10,7 @@
 #include "thread_info.h"
 
 std::vector<std::shared_ptr<Function>> functions;
-std::vector<std::pair<std::thread, ThreadInfo>> threads;
+std::vector<std::thread> threads;
 
 const static int ORDER = 7;
 
@@ -82,16 +82,15 @@ void Executor::process_instruction() {
         }
         bool if_thread = label->get_if_thread();
         if (if_thread) {
-            Executor subexecutor(this->buffer_ref, this->vm_registers, this->memory);
-            subexecutor.set_actual_bit(label->get_jump_address());
-            ThreadInfo thread_info(subexecutor, static_cast<uint32_t>(label->get_jump_address()));
+            Executor *subexecutor = new Executor(this->buffer_ref, this->vm_registers, this->memory);
+            subexecutor->set_actual_bit(label->get_jump_address());
+            ThreadInfo thread_info(std::move(*subexecutor), static_cast<uint32_t>(label->get_jump_address()));
             thread_info.set_executed_bit(label->get_jump_address());
-            std::thread subprocess(std::ref(thread_info));
-            thread_info.set_thread_id(subprocess.get_id());
-            std::pair<std::thread, ThreadInfo> thread_subprocess_map(std::move(subprocess), thread_info);
-            threads.push_back(std::move(thread_subprocess_map));
-            vm_registers[label->get_thread_id_reg()].get()->value = static_cast<int64_t>(hasher(subprocess.get_id()));
             threads_number++;
+            threads.emplace_back(std::move(thread_info));
+            auto thread_id = threads.back().get_id();
+            vm_registers[label->get_thread_id_reg()].get()->value = static_cast<int64_t>(hasher(thread_id));
+
         }
         delete label;
     }
@@ -99,19 +98,13 @@ void Executor::process_instruction() {
         functions.back()->set_function_end(true);
     }
     if (instruction.if_join) {
-//        int64_t hash_thread_id = vm_registers[arguments.back()->reg_id]->value;
-//        for (std::pair<std::thread, ThreadInfo> &thread : threads) {
-//            ThreadInfo thread_info = std::get<1>(thread);
-//            if (hasher(thread_info.get_thread_id()) == hash_thread_id) {
-//                std::thread join_thread = std::move(std::get<0>(thread));
-                while(1) {
-
-                }
-//                join_thread.join();
-//            }
-//        }
-
-   }
+        int64_t hash_thread_id = vm_registers[arguments.back()->reg_id]->value;
+        for (std::thread &thread : threads) {
+            if (hasher(threads.back().get_id()) == hash_thread_id) {
+                threads.back().join();
+            }
+        }
+    }
 }
 
 void Executor::execution(int64_t constant_arg, Label &label, std::vector<std::shared_ptr<Argument>> arguments) {
